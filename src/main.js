@@ -3,11 +3,22 @@ import {render} from 'react-dom';
 import {connect, Provider} from 'react-redux';
 import {combineReducers, createStore } from 'redux'
 
+const getRenditionInfoFromMasterM3u8 = (masterM3u8Url) => {
+  return [
+    {
+      url: 'https://example.com/master5000.m3u8'
+    },
+    {
+      url: 'https://example.com/master3000.m3u8'
+    },
+  ]
+}
+
 const _RenditionListView = (props) => {
   let selectEl;
 
   const createListItem = (rendition) => (
-    <option>
+    <option key={rendition.url}>
       {rendition.url}
     </option>
   )
@@ -17,7 +28,7 @@ const _RenditionListView = (props) => {
       ref={ el => {selectEl = el} }
       onChange={() => props.onNewReditionSelected(selectEl.value) }
     >
-      {this.props.renditions.map(createListItem)}
+      {props.renditions.map(createListItem)}
     </select>
   );
 };
@@ -57,24 +68,41 @@ const Player = connect(
 )(_Player);
 
 const stateReducers = combineReducers({
-  renditionUrl: (prevState, action) => {
+  renditionUrl: (prevState=null, action) => {
     switch (action.type) {
       case 'SET_RENDTION_URL':
         return action.renditionUrl;
       default:
         return prevState;
     }
-  }
+  },
+
+  masterM3u8Url: (prevState=null, action) => {
+    switch (action.type) {
+      case 'SET_MASTER_M3U8_URL':
+        return action.masterM3u8Url;
+      default:
+        return prevState;
+    }
+  },
 });
 
 const store = createStore(stateReducers);
+store.dispatch({
+  type: 'SET_MASTER_M3U8_URL',
+  masterM3u8Url: 'https://example.com/master.m3u8',
+})
 
 const HlsTestAppView = React.createClass({
   render: () => (
     <Provider store={store}>
-      <RenditionListView/>
-      <Player/>
+      <div>
+        <RenditionListView/>
+        <Player/>
+      </div>
     </Provider>
   ),
 
 })
+
+render(<HlsTestAppView/>, document.getElementById('appHolder'));
