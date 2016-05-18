@@ -51,9 +51,9 @@ const _Player = (props) => {
 }
 
 const Player = connect(
-  (state) => {
+  state => ({
     renditionUrl: state.renditionUrl,
-  }
+  })
 )(_Player);
 
 const stateReducers = combineReducers({

@@ -2,3 +2,5 @@
 
 #To build
     gulp build
+or
+    gulp build:watch
