@@ -6,10 +6,7 @@ const _PlayerView = (props) => {
 
   return (
     <div>
-      <video data-account="4468173393001"
-      data-player="c8b1e2c3-c5b0-48ec-9675-75b5d76db355"
-      data-embed="default"
-      class="video-js"
+      <video
       src={props.renditionUrl}
       controls
       >
