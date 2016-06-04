@@ -6,6 +6,7 @@
 * Vanila hot module replacment with webpack dev server
 * Gulp task for build
 * Redux and redux-thunk based state managment
+* Eslint with Airbnb style
 
 #Run dev server
 
@@ -17,3 +18,6 @@ When use dev server, yo don't need to run gulp build command at all
     gulp build
 or
     gulp build:watch
+
+#To lint
+    npm run lint

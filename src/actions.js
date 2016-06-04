@@ -1,6 +1,5 @@
-import urlParser from 'url'
+import urlParser from 'url';
 import fetch from 'isomorphic-fetch';
-const m3u8Parser = /^(.*\.m3u8$)/g;
 
 const getRenditionsFromMasterM3u8 = (masterM3u8, masterM3u8Url) => {
   const res = masterM3u8.split(/\r?\n/)
@@ -10,12 +9,12 @@ const getRenditionsFromMasterM3u8 = (masterM3u8, masterM3u8Url) => {
     }));
   console.log(res);
   return res;
-}
+};
 
 const updateMasterM3u8UrlToStore = (masterM3u8Url) => (dispatch) => {
   dispatch({
     type: 'SET_MASTER_M3U8_URL',
-    masterM3u8Url: masterM3u8Url,
+    masterM3u8Url,
   });
 
   fetch(masterM3u8Url)
@@ -24,8 +23,8 @@ const updateMasterM3u8UrlToStore = (masterM3u8Url) => (dispatch) => {
     type: 'SET_RENDTION_LIST',
     renditions: getRenditionsFromMasterM3u8(body, masterM3u8Url),
   }));
-}
+};
 
 export default {
   updateMasterM3u8UrlToStore,
-}
+};
