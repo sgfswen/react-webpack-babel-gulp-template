@@ -1,26 +1,32 @@
-export default function stateReducers(prevState=null, action){
+export default function masterReducer(state, action) {
+  let nextState;
+
   switch (action.type) {
-    case 'SET_RENDTION_URL':
-      return {
-        ...prevState,
-        renditionUrl: action.renditionUrl,
-      }
+    case 'newSession':
+      nextState = Object.assign({}, state, {
+        idxOfVideoToEvaluate: -1,
+        testerId: Math.random().toString(36).substring(7),
+      });
+      break;
 
-    case 'SET_MASTER_M3U8_URL':
-      return {
-        masterM3u8Url: action.masterM3u8Url,
-        renditions: [],
-        renditionUrl: null,
-      }
+    case 'gotoNextPresentationPhase':
+      nextState = Object.assign({}, state, {
+        presentationPhase: state.presentationPhase + 1,
+      });
+      break;
 
-    case 'SET_RENDTION_LIST':
-      return {
-        ...prevState,
-        renditions: action.renditions,
-        renditionUrl: action.renditions[0].url,
-      }
+    case 'evaluateNextVideo':
+      nextState = Object.assign({}, state, {
+        idxOfVideoToEvaluate: state.idxOfVideoToEvaluate + 1,
+        presentationOrder: action.presentationOrder,
+        presentationPhase: 0,
+      });
+      break;
 
     default:
-      return prevState;
+      nextState = state;
+      break;
   }
-};
+
+  return nextState;
+}

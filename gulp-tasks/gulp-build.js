@@ -4,21 +4,19 @@ import gutil from 'gutil';
 import webpack from 'webpack';
 import webpackConfig from '../webpack.config.js';
 
-gulp.task('build', ['clean'], function(done) {
+gulp.task('build', ['clean'], (done) => {
   webpack(webpackConfig, (err, bundleStatus) => {
-    if (err){
+    if (err) {
       done(err);
-    }else{
+    } else {
       gutil.log('[webpack]', bundleStatus.toString({
         colors: true,
       }));
-      done()
+      done();
     }
   });
 });
 
 gulp.task('clean', () => del.sync(['dist/**/*']));
 
-gulp.task('build:watch', ['build'], function() {
-  return gulp.watch('./src/**/*.*', ['build']);
-});
+gulp.task('build:watch', ['build'], () => gulp.watch('./src/**/*.*', ['build']));

@@ -1,30 +1,43 @@
-import urlParser from 'url';
-import fetch from 'isomorphic-fetch';
+import { getVideoSlug } from './libs/videoUtils';
+import { saveDscqsScore, saveSsScore } from './libs/db';
 
-const getRenditionsFromMasterM3u8 = (masterM3u8, masterM3u8Url) => {
-  const res = masterM3u8.split(/\r?\n/)
-    .filter(line => line.match(/\.m3u8/))
-    .map(url => ({
-      url: urlParser.resolve(masterM3u8Url, url),
-    }));
-  console.log(res);
-  return res;
+const evaluateNextVideo = dispatch => {
+  const presentationOrder = Math.random() > 0.5 ? 'REFERENCE_FIRST' : 'TEST_FIRST';
+  console.log(presentationOrder);
+
+  dispatch({
+    type: 'evaluateNextVideo',
+    presentationOrder,
+  });
 };
 
-const updateMasterM3u8UrlToStore = (masterM3u8Url) => (dispatch) => {
-  dispatch({
-    type: 'SET_MASTER_M3U8_URL',
-    masterM3u8Url,
-  });
+const gotoNextPresentationPhase = {
+  type: 'gotoNextPresentationPhase',
+};
 
-  fetch(masterM3u8Url)
-  .then(resp => resp.text())
-  .then(body => dispatch({
-    type: 'SET_RENDTION_LIST',
-    renditions: getRenditionsFromMasterM3u8(body, masterM3u8Url),
-  }));
+const newSession = {
+  type: 'newSession',
+};
+
+const submitScore = (score) => (dispatch, getState) => {
+  const state = getState();
+
+  const videoSlug = getVideoSlug(state.testVideos[state.idxOfVideoToEvaluate]);
+
+  if (score instanceof Array) {
+    const referenceVideoScore = state.presentationOrder === 'REFERENCE_FIRST' ? score[0] : score[1];
+    const testVideoScore = state.presentationOrder === 'TEST_FIRST' ? score[0] : score[1];
+    saveDscqsScore(videoSlug, state.testerId, referenceVideoScore, testVideoScore);
+  } else if (typeof score === 'number') {
+    saveSsScore(videoSlug, state.testerId, score);
+  }
+
+  dispatch(evaluateNextVideo);
 };
 
 export default {
-  updateMasterM3u8UrlToStore,
+  newSession,
+  submitScore,
+  evaluateNextVideo,
+  gotoNextPresentationPhase,
 };
