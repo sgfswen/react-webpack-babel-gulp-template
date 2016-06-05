@@ -1,4 +1,4 @@
-#A ReactJs projec template with webpack, babel and gulp
+#A ReactJs project template with webpack, babel and gulp
 
 #Feature list
 * Webpack based bundling process
